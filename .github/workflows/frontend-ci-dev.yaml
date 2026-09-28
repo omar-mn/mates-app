@@ -28,7 +28,7 @@ jobs:
         with:
           context: ./frontend/.
           push: true
-          tags: 3omar0/-front:${{ env.IMAGE_TAG }}
+          tags: 3omar0/mates-front:${{ env.IMAGE_TAG }}
 
 
 
