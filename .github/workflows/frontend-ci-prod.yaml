@@ -45,19 +45,18 @@ jobs:
         with:
           repository: omar-mn/mates-config
           token: ${{ secrets.GITOPS_TOKEN }}
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
   
       - name: Update image
-        env:
-          IMAGE_TAG: ${GITHUB_REF_NAME}
         run: |
-          sed -i "s/mates-front:v.*/mates-front:${IMAGE_TAG}/" frontend.yaml
+          sed -i "s/mates-front:v.*/mates-front:${{ env.IMAGE_TAG }}/" frontend.yaml
   
       - name: Commit and push
-        env:
-          IMAGE_TAG: ${GITHUB_REF_NAME}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Update frontend image to ${IMAGE_TAG}"
+          git commit -m "Update frontend image to ${{ env.IMAGE_TAG }}"
           git push
