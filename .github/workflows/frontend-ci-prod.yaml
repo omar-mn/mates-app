@@ -55,8 +55,8 @@ jobs:
   
       - name: Commit and push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "ghost"
+          git config user.email "ghost@null"
           git add .
           git commit -m "Update frontend image to ${{ env.IMAGE_TAG }}"
           git push
