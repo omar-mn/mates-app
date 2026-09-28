@@ -48,13 +48,13 @@ jobs:
   
       - name: Update image
         env:
-          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          IMAGE_TAG: ${GITHUB_REF_NAME}
         run: |
           sed -i "s/mates-front:v.*/mates-front:${IMAGE_TAG}/" frontend.yaml
   
       - name: Commit and push
         env:
-          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          IMAGE_TAG: ${GITHUB_REF_NAME}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
