@@ -14,10 +14,13 @@ COPY --from=base /app/wheels /wheels
 COPY --from=base /app/requirements.dev.txt .
 
 RUN pip install --no-cache /wheels/*
+
 RUN pip install uvicorn[standard]
 
-COPY ./src ./src
-COPY build.sh /app/src/build.sh
+COPY ./src .
 
-RUN chmod +x /app/src/build.sh
-CMD ["./build.sh"]
+COPY build.sh .
+
+RUN chmod +x build.sh
+
+CMD ["sh", "build.sh"]
