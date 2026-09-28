@@ -5,7 +5,7 @@ on:
     branches:
       - dev
     paths:
-      - "backend/**"
+      - "backend/src/**"
 
 jobs:
   test:
@@ -71,7 +71,7 @@ on:
     tag:
       - 'v*'
     paths:
-      - "backend/**"
+      - "backend/src/**"
 
 jobs:
   test:
