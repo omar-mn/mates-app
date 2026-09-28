@@ -2,7 +2,8 @@ import pytest
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 
-from .models import Room, MemberShip, JoinRequest, UserSnapshot
+from .models import Room, MemberShip, JoinRequest
+from Users.models import account
 
 
 # ---------- Fixtures ----------
@@ -19,12 +20,12 @@ def other_user(db):
 
 @pytest.fixture
 def snapshot(user):
-    return UserSnapshot.objects.create(id=user.id, username=user.username)
+    return account.objects.create(id=user.id, username=user.username)
 
 
 @pytest.fixture
 def other_snapshot(other_user):
-    return UserSnapshot.objects.create(id=other_user.id, username=other_user.username)
+    return account.objects.create(id=other_user.id, username=other_user.username)
 
 
 @pytest.fixture
