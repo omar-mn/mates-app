@@ -91,9 +91,9 @@ ASGI_APPLICATION = 'Mates.asgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env('DB_NAME'),
-        "USER": env('DB_USER'),
-        "PASSWORD": env('DB_PASSWORD'),
+        "NAME": env('POSTGRES_DB'),
+        "USER": env('POSTGRES_USER'),
+        "PASSWORD": env('POSTGRES_PASSWORD'),
         "HOST": env('DB_HOST'),
         "PORT": env('DB_PORT'),
     }
@@ -191,7 +191,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get("REDIS_URL", "redis://redis:6379/1")],
+            "hosts": [os.environ.get("REDIS_URL", "redis://redis-svc:6379/1")],
         },
     },
 }
@@ -241,5 +241,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 # CELERY
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis-svc:6379/0")
 CELERY_RESULT_BACKEND = 'django-db'
