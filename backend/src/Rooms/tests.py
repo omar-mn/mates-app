@@ -43,35 +43,44 @@ def other_auth_client(other_user):
 
 @pytest.fixture
 def room(user):
-    return Room.objects.create(
+    room = Room.objects.create(
         name="General",
         owner=user,
         private=False,
     )
 
-
-@pytest.fixture
-def private_room(user):
-    return Room.objects.create(
-        name="Private Room",
-        owner=user,
-        private=True,
-    )
-
-
-@pytest.fixture
-def membership(user, room):
-    return MemberShip.objects.create(
+    MemberShip.objects.create(
         user=user,
         room=room,
         role="owner",
     )
 
+    return room
+
+
+@pytest.fixture
+def private_room(user):
+    room = Room.objects.create(
+        name="Private Room",
+        owner=user,
+        private=True,
+    )
+
+    MemberShip.objects.create(
+        user=user,
+        room=room,
+        role="owner",
+    )
+
+    return room
+
 
 # ---------- Tests ----------
 
 def test_authenticated_user_can_list_rooms(auth_client, room):
-    response = auth_client.get("/api/rooms/")
+    response = auth_client.get(
+        "/api/rooms/"
+    )
 
     assert response.status_code == 200
 
@@ -89,10 +98,15 @@ def test_authenticated_user_can_create_room(auth_client):
     )
 
     assert response.status_code in (200, 201)
-    assert Room.objects.filter(name="New Room").exists()
+    assert Room.objects.filter(
+        name="New Room"
+    ).exists()
 
 
-def test_existing_room_detail_returns_200(auth_client, room):
+def test_existing_room_detail_returns_200(
+    auth_client,
+    room,
+):
     response = auth_client.get(
         f"/api/rooms/room/{room.pk}/"
     )
@@ -100,12 +114,15 @@ def test_existing_room_detail_returns_200(auth_client, room):
     assert response.status_code == 200
 
 
-def test_missing_room_detail_returns_200_with_error(auth_client):
+def test_missing_room_detail_returns_200_with_error(
+    auth_client,
+):
     response = auth_client.get(
         "/api/rooms/room/99999/"
     )
 
-    # Current GetRoom view returns 200 instead of 404.
+    # Current GetRoom view returns HTTP 200
+    # with an error message instead of HTTP 404.
     assert response.status_code == 200
     assert "error" in response.data
 
@@ -178,7 +195,6 @@ def test_member_can_leave_room(
 def test_owner_cannot_leave_room(
     auth_client,
     room,
-    membership,
 ):
     response = auth_client.post(
         f"/api/rooms/leave/{room.pk}/"
@@ -189,7 +205,8 @@ def test_owner_cannot_leave_room(
 
 def test_authenticated_user_can_get_joined_rooms(
     auth_client,
-    membership,
+    room,
+    user,
 ):
     response = auth_client.get(
         "/api/rooms/joinedrooms/"
