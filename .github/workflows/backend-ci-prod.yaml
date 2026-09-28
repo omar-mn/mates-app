@@ -82,7 +82,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
         run: |
-          sed -i "s/^  image:.*/  image: 3omar0/mates:${IMAGE_TAG}/" backend.yaml
+          sed -i "s/mates:v.*/mates:${IMAGE_TAG}/" backend.yaml
 
       - name: Commit and push
         env:
