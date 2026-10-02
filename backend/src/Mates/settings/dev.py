@@ -184,7 +184,7 @@ SITE_ID = 2
 # EMAIL_HOST_PASSWORD                 = env('EMAIL_PASS')
 
 # DEFAULT_FROM_EMAIL                  = "Mates <om3309967@gmail.com>"
-
+   
 # CHANNELS
 
 CHANNEL_LAYERS = {
