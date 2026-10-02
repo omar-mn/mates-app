@@ -5,10 +5,32 @@ from Users.serializers import RoomUser
 
 # ALL ROOMS
 class ViewRooms(serializers.ModelSerializer):
-    is_member   = serializers.SerializerMethodField()
-    owner       = RoomUser(read_only=True)
-    members     = serializers.SerializerMethodField()
-    membersCount = serializers.SerializerMethodField()
+    is_member = serializers.BooleanField(read_only=True)
+    owner = RoomUser(read_only=True)
+    members = serializers.SerializerMethodField()
+    membersCount = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Room
+        fields = (
+            'id',
+            'name',
+            'description',
+            'category',
+            'is_member',
+            'private',
+            'membersCount',
+            'owner',
+            'members'
+        )
+
+    def get_members(self, obj):
+        members = Join_MS(
+            obj.active_members[:5],
+            many=True,
+            context=self.context
+        )
+        return members.data
 
     class Meta:
         model = Room

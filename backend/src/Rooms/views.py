@@ -8,17 +8,59 @@ from rest_framework.pagination import PageNumberPagination
 from django.utils import timezone
 from Mates.permissions import IsRoomMember , CanManageRoom , IsNotRoomMember , IsNotOwner
 from rest_framework import status
+from django.db.models import Count, Exists, OuterRef, Prefetch, Q
+
 
 # ALL ROOMS
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def AvailbleRooms(request):
-    rooms = Room.objects.all()
-    pagintaor = PageNumberPagination()
-    pagintaor.page_size = 10
-    queryset = pagintaor.paginate_queryset(rooms,request)
-    serializer = ViewRooms(queryset , many=True , context={"request": request})
+
+    active_members = (
+        MemberShip.objects
+        .filter(leftDate__isnull=True)
+        .select_related('user')
+        .order_by('joinDate')
+    )
+
+    rooms = (
+        Room.objects
+        .select_related('owner')
+        .annotate(
+            is_member=Exists(
+                MemberShip.objects.filter(
+                    user=request.user,
+                    room=OuterRef('pk'),
+                    leftDate__isnull=True
+                )
+            ),
+            membersCount=Count(
+                'membership',
+                filter=Q(membership__leftDate__isnull=True)
+            )
+        )
+        .prefetch_related(
+            Prefetch(
+                'membership_set',
+                queryset=active_members,
+                to_attr='active_members'
+            )
+        )
+    )
+
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+
+    queryset = paginator.paginate_queryset(rooms, request)
+
+    serializer = ViewRooms(
+        queryset,
+        many=True,
+        context={'request': request}
+    )
+
     return Response(serializer.data)
 
 
